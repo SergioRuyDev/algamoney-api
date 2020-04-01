@@ -7,6 +7,7 @@ import com.sergioruy.algamoneyapi.repository.PessoaRepository;
 import com.sergioruy.algamoneyapi.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,9 @@ public class PessoaResource {
     @GetMapping("/{codigo}")
     public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo) {
         Optional<Pessoa> pessoa = this.pessoaRepository.findById(codigo);
+        if (!pessoa.isPresent()) {
+            throw new EmptyResultDataAccessException("codigo", 1);
+        }
         return pessoa.isPresent() ?
                 ResponseEntity.ok(pessoa.get()) : ResponseEntity.notFound().build();
     }
@@ -55,9 +59,9 @@ public class PessoaResource {
     }
 
     @PutMapping("/{codigo}")
-    public Pessoa atualizar(@PathVariable Long codigo, @RequestBody Pessoa pessoa) {
+    public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
         Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
-        return this.pessoaRepository.save(pessoaSalva);
+        return ResponseEntity.ok(pessoaSalva);
     }
 
     @PutMapping("/{codigo}/ativo")
