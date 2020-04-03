@@ -15,7 +15,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery{
+public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
     @PersistenceContext
     private EntityManager manager;
@@ -26,33 +26,33 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery{
         CriteriaQuery<Lancamento> criteria = builder.createQuery(Lancamento.class);
         Root<Lancamento> root = criteria.from(Lancamento.class);
 
-        //criar as restrições
         Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
         criteria.where(predicates);
 
         TypedQuery<Lancamento> query = manager.createQuery(criteria);
-
         return query.getResultList();
     }
 
-    private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder, Root<Lancamento> root) {
-
+    private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder,
+                                        Root<Lancamento> root) {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(lancamentoFilter.getDescricao())) {
-            predicates.add(builder.like(builder.lower(root.get(Lancamento_.descricao)), "%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
+            predicates.add(builder.like(
+                    builder.lower(root.get(Lancamento_.descricao)), "%" + lancamentoFilter.getDescricao().toLowerCase() + "%"));
         }
 
         if (lancamentoFilter.getDataVencimentoDe() != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoDe()));
-
+            predicates.add(
+                    builder.greaterThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoDe()));
         }
 
         if (lancamentoFilter.getDataVencimentoAte() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
-
+            predicates.add(
+                    builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
         }
 
-        return  predicates.toArray(new Predicate[predicates.size()]);
+        return predicates.toArray(new Predicate[predicates.size()]);
     }
+
 }
