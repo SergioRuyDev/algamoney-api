@@ -33,7 +33,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
         criteria.where(predicates);
 
         TypedQuery<Lancamento> query = manager.createQuery(criteria);
-        adicionarRestricosDePaginacao(query,pageable);
+        adicionarRestricoesDePaginacao(query,pageable);
 
         return new PageImpl<>(query.getResultList(), pageable, total(lancamentoFilter));
     }
@@ -55,7 +55,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
         criteria.where(predicates);
 
         TypedQuery<ResumoLancamento> query = manager.createQuery(criteria);
-        adicionarRestricosDePaginacao(query,pageable);
+        adicionarRestricoesDePaginacao(query, pageable);
 
         return new PageImpl<>(query.getResultList(), pageable, total(lancamentoFilter));
     }
@@ -83,7 +83,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
         return predicates.toArray(new Predicate[predicates.size()]);
     }
 
-    private void adicionarRestricosDePaginacao(TypedQuery<?> query, Pageable pageable) {
+    private void adicionarRestricoesDePaginacao(TypedQuery<?> query, Pageable pageable) {
         int paginaAtual = pageable.getPageNumber();
         int totalRegistrosPorPagina = pageable.getPageSize();
         int primeiroRegistroDaPagina = paginaAtual * totalRegistrosPorPagina;
@@ -94,13 +94,13 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
     private Long total(LancamentoFilter lancamentoFilter) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaQuery<Long> crteria = builder.createQuery(long.class);
-        Root<Lancamento> root = crteria.from(Lancamento.class);
+        CriteriaQuery<Long> criteria = builder.createQuery(long.class);
+        Root<Lancamento> root = criteria.from(Lancamento.class);
 
         Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
-        crteria.where(predicates);
+        criteria.where(predicates);
 
-        crteria.select(builder.count(root));
-        return manager.createQuery(crteria).getSingleResult();
+        criteria.select(builder.count(root));
+        return manager.createQuery(criteria).getSingleResult();
     }
 }
