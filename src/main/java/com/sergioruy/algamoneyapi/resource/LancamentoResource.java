@@ -29,6 +29,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/lancamentos")
+@CrossOrigin(origins = "*")
 public class LancamentoResource {
 
     @Autowired

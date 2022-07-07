@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/pessoas")
+@CrossOrigin(origins = "*")
 public class PessoaResource {
 
     @Autowired
